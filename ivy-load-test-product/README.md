@@ -34,14 +34,14 @@ This test validates response codes at every step, extracts dynamic values (ViewS
 
 ### PerformancePortalTestReviewInGui
 
-Same Portal walkthrough as above, but opens the **JMeter GUI** (`resultsTreeVisualizer`) for visual debugging and request/response inspection during local development.
+Same Portal walkthrough as above, but opens the **JMeter GUI** via `.showInGui()` for visual debugging and request/response inspection during local development.
 
 ## Setup
 
 ### Project Structure
 ```
 <your_project_application>/
-├── src_test/com/axonivy/
+├── src_test/
 │   └── <your_project_application>Test.java
 ├── resources/
 │   ├── test.properties

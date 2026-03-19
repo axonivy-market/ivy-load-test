@@ -3,7 +3,7 @@
   <groupId>com.axonivy.market</groupId>
   <name>ivy-load-test</name>
   <artifactId>ivy-load-test-modules</artifactId>
-  <version>14.0.0-SNAPSHOT</version>
+  <version>13.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
