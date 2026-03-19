@@ -10,9 +10,10 @@ hs_err_pid*
 
 # maven
 target/
+lib/mvn-deps/
 
 # ivy
-lib/mvn-deps/
-logs/
+classes/
 src_dataClasses/
 src_wsproc/
+logs/
