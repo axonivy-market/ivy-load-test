@@ -1,7 +1,7 @@
-# Ivy Load Test
+# MY-PRODUCT-NAME
 
-[![CI Build](https://github.com/axonivy-market/ivy-load-test/actions/workflows/ci.yml/badge.svg)](https://github.com/axonivy-market/ivy-load-test/actions/workflows/ci.yml)
+[![CI Build](https://github.com/axonivy-market/REPO-NAME/actions/workflows/ci.yml/badge.svg)](https://github.com/axonivy-market/REPO-NAME/actions/workflows/ci.yml)
 
-Demo performance tests as a reference for your Axon Ivy project using JMeter Java DSL.
+"YOUR SHORT DESCRIPTION GOES HERE"
 
-Read our [documentation](ivy-load-test-product/README.md).
+Read our [documentation](MY-PRODUCT-NAME-product/README.md).
