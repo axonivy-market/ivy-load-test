@@ -32,14 +32,14 @@ Dieser Test validiert Antwortcodes bei jedem Schritt, extrahiert dynamische Wert
 
 ### PerformancePortalTestReviewInGui
 
-Derselbe Portal-Durchlauf wie oben, öffnet jedoch die **JMeter-GUI** (`resultsTreeVisualizer`) zur visuellen Fehlersuche und Analyse von Anfragen/Antworten während der lokalen Entwicklung.
+Derselbe Portal-Durchlauf wie oben, öffnet jedoch die **JMeter-GUI** über `.showInGui()` zur visuellen Fehlersuche und Analyse von Anfragen/Antworten während der lokalen Entwicklung.
 
 ## Setup
 
 ### Projektstruktur
 ```
 <ihr_projekt_anwendung>/
-├── src_test/com/axonivy/
+├── src_test/
 │   └── <ihr_projekt_anwendung>Test.java
 ├── resources/
 │   ├── test.properties
@@ -108,7 +108,7 @@ csvDataSet(csvFilePath)
 
 ### Sicherheitsmanagement für Zugangsdaten
 
-Ihre Zugangsdaten-Dateien enthalten sensible Informationen und sollten **niemals** in die Versionskontrolle eingecheckt werden.
+Ihre Zugangsdaten-Dateien enthalten sensible Informationen und sollten **niemals** in die Versionskontrolle eingecheckt werden. Hier sind einige Ansätze, um sie sicher zu verwalten:
 
 > **Hinweis:** Dies ist nur ein Beispiel, wie Dateien in einem Projekt verwendet werden können. Es gibt mehrere Möglichkeiten, Zugangsdaten zu verwalten; andere Lösungen sind möglich.
 

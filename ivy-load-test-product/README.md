@@ -1,7 +1,5 @@
 # JMeter Java DSL Performance Test
 
-![JMeter Java DSL Performance Test](doc.png)
-
 This project provides demo performance tests as a reference for your Axon Ivy project using **JMeter Java DSL**, a modern Java-based approach to performance testing. It offers a fluent API for creating JMeter test plans programmatically, eliminating the need for XML-based test plans by allowing you to write tests in pure Java code.
 
 **Key Benefits:**
