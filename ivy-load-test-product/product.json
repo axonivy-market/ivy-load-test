@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.axonivy.com/market/10.0.0/product.json",
+  "minimumIvyVersion": "13.2.0",
+  "installers": [
+    {
+      "id": "maven-import",
+      "data": {
+        "projects": [
+          {
+            "groupId": "com.axonivy.demo.loadtest",
+            "artifactId": "ivy-load-test-demo",
+            "version": "${version}",
+            "type": "iar"
+          }
+        ],
+        "repositories": [
+          {
+            "id": "maven.axonivy.com",
+            "url": "https://maven.axonivy.com",
+            "snapshots": {
+              "enabled": "true"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "maven-dependency",
+      "data": {
+        "dependencies": [
+          {
+            "groupId": "com.axonivy.demo.loadtest",
+            "artifactId": "ivy-load-test",
+            "version": "${version}",
+            "type": "iar"
+          }
+        ],
+        "repositories": [
+          {
+            "id": "maven.axonivy.com",
+            "url": "https://maven.axonivy.com",
+            "snapshots": {
+              "enabled": "true"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

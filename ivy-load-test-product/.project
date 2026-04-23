@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ivy-load-test-modules</name>
+	<name>ivy-load-test-product</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -16,7 +16,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1767769109482</id>
+			<id>1772793140084</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
