@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.axonivy.ivy.api</groupId>
+    <artifactId>ivy-project-parent</artifactId>
+    <version>14.0.0-SNAPSHOT</version>
+    <relativePath></relativePath>
+  </parent>
   <groupId>com.axonivy.demo.loadtest</groupId>
   <artifactId>ivy-load-test-demo</artifactId>
-  <version>13.2.1-SNAPSHOT</version>
+  <version>14.0.0-SNAPSHOT</version>
   <properties>
-    <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>21</maven.compiler.source>
   </properties>
   <dependencies>
     <dependency>
       <groupId>us.abstracta.jmeter</groupId>
       <artifactId>jmeter-java-dsl</artifactId>
-      <version>1.29.1</version>
+      <version>2.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>6.0.3</version>
+      <version>6.1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -31,7 +37,7 @@
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
-      <version>6.0.3</version>
+      <version>6.1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -39,31 +45,44 @@
       <artifactId>jmeter-java-dsl-jmx2dsl</artifactId>
       <version>1.8</version>
     </dependency>
-  
+    <dependency>
+      <groupId>com.axonivy.ivy.api</groupId>
+      <artifactId>ivy-api</artifactId>
+    </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+      <id>maven.axonivy.com</id>
+      <url>https://maven.axonivy.com</url>
+    </repository>
+  </repositories>
   <build>
     <testSourceDirectory>src_test</testSourceDirectory>
     <plugins>
-      <!-- We force to use the latest version of surefire plugin to properly run junit5 tests -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.5</version>
         <configuration>
           <excludes>
-            <!-- Requires a running Portal server - execute locally only -->
             <exclude>**/PerformancePortalTest.java</exclude>
-            <!-- Opens JMeter GUI - execute locally only -->
             <exclude>**/PerformancePortalTestReviewInGui.java</exclude>
           </excludes>
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.15.0</version>
       </plugin>
     </plugins>
-
   </build>
 </project>
