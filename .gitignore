@@ -16,3 +16,16 @@ lib/mvn-deps/
 logs/
 src_dataClasses/
 src_wsproc/
+
+# IDE
+.classpath
+.factorypath
+.project
+.settings/
+
+# load-test recorder output (jbang record.sh / record.ps1 working dir)
+recording/
+
+# load-test credentials — never commit real credentials (see product README)
+**/resources/*.csv
+!**/resources/one_user.csv

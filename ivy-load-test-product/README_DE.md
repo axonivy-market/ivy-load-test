@@ -1,305 +1,168 @@
-# JMeter Java DSL Performance Test
+# Ivy Load Test
 
-Dieses Projekt stellt Demo-Performance-Tests als Referenz für Ihr Axon Ivy Projekt bereit und verwendet **JMeter Java DSL**, einen modernen Java-basierten Ansatz für Performance-Tests. Es bietet eine Fluent-API zur programmatischen Erstellung von JMeter-Testplänen und ersetzt XML-basierte Testpläne durch reinen Java-Code.
+Testen Sie Ihre Axon Ivy-Anwendung auf Last — in wenigen Minuten. JMeter-Tests für eine JSF/PrimeFaces-Anwendung von Hand zu schreiben bedeutet, Komponenten-IDs in den DevTools zu suchen, für jeden AJAX-Aufruf manuell ViewState zu verdrahten und sprödes XML zu pflegen. Diese Bibliothek erledigt all das für Sie — kopieren Sie eine Vorlage, geben Sie an, wo Ihre App läuft und was angeklickt werden soll, und sie generiert automatisch den richtigen JMeter-Testplan.
 
-**Vorteile:**
-- **Typsicherheit**: Validierung der Testpläne zur Kompilierzeit
-- **IDE-Unterstützung**: Vollständige Debugging-Funktionen
-- **Wartbarkeit**: Einfaches Refactoring und Code-Wiederverwendung
-- **Versionskontrolle**: Reiner Java-Code statt XML-Dateien
-- **Integration**: Nahtlose Integration mit JUnit und Test-Frameworks
+## So funktioniert es
 
-## Demo
+Sie beschreiben die Benutzerreise in normalem Java — die Bibliothek übersetzt das in einen vollständigen JMeter-Testplan:
 
-### DemoTest
-
-Ein einfacher Smoke-Test zur Überprüfung der externen Website-Verfügbarkeit:
-- Sendet HTTP-GET-Anfragen an `axonivy.com` und `market.axonivy.com`
-- Validiert HTTP-200-Antwortcodes und erwartete Seiteninhalte
-- Generiert JTL-Ergebnisdateien und HTML-Berichte
-
-### PerformancePortalTest
-
-Ein vollständiger Portal-Durchlauftest, der eine echte Benutzersitzung simuliert:
-1. **Anmeldung** — Authentifizierung mit Zugangsdaten aus einer CSV-Datei
-2. **Portal-Startseite** — Navigation zur Startseite
-3. **Prozesse** — Öffnen der Prozessliste
-4. **Aufgabenliste** — Navigation zum Aufgabenlisten-Dashboard
-5. **Fallliste** — Navigation zum Falllisten-Dashboard
-6. **Abmeldung** — Beenden der Sitzung
-
-Dieser Test validiert Antwortcodes bei jedem Schritt, extrahiert dynamische Werte (ViewState, Weiterleitungs-URLs) per Regex und gibt Ergebnisse als JTL und HTML aus.
-
-### PerformancePortalTestReviewInGui
-
-Derselbe Portal-Durchlauf wie oben, öffnet jedoch die **JMeter-GUI** über `.showInGui()` zur visuellen Fehlersuche und Analyse von Anfragen/Antworten während der lokalen Entwicklung.
-
-## Setup
-
-### Projektstruktur
-```
-<ihr_projekt_anwendung>/
-├── src_test/
-│   └── <ihr_projekt_anwendung>Test.java
-├── resources/
-│   ├── test.properties
-│   └── <dateiname>.csv
-└── target/
-    └── jtls/
-```
-
-### Schnellstart
-1. Repository klonen
-2. Einfachen Demo-Test ausführen:
-```bash
-mvn clean test -Dtest=DemoTest
-```
-3. Für `PerformancePortalTest`:
-   - Code mit Axon Ivy Designer öffnen
-   - Portal vom Axon Ivy Market installieren (Version muss mit Designer kompatibel sein)
-   - Benutzer-Zugangsdaten in `one_user.csv` aktualisieren
-   - Ausführen: `mvn clean test -Dtest=PerformancePortalTest`
-
-### Konfiguration
-
-Konfigurieren Sie Ihren Test über `resources/test.properties`
-
-### Properties-Konfiguration
-
-#### Server-Eigenschaften
-```properties
-# Name des Sicherheitssystems
-# Abhängig von der Servereinrichtung
-# In lokaler Umgebung leer lassen
-security.system.name=
-
-# Anwendungsname
-application.name=designer
-
-# Projektname
-project.name=<ihr_projektname>
-
-# Server-Host
-server.host=localhost
-```
-
-#### CSV-Datendateien
-```properties
-##### CSV-Datei für Benutzer
-one_user.csv=resources/<dateiname>.csv
-```
-
-### CSV-Datenkonfiguration
-
-CSV-Dateien enthalten Benutzer-Zugangsdaten im Format: `benutzername,passwort`
-
-Beispiel (`users.csv`):
-```csv
-benutzer1,passwortFuerBenutzer1
-```
-
-CSV Data Set Konfiguration im Code:
 ```java
-csvDataSet(csvFilePath)
-  .variableNames("username,password")  // Spaltennamen definieren
-  .delimiter(",")                      // CSV-Trennzeichen
-  .ignoreFirstLine(false)              // Auf true setzen wenn CSV Header hat
+IvyLoadTestRunner.builder(APP, "mein-szenario")
+    .steps(
+        openProcess(APP, "Open Home", HOME_PROCESS),
+        menuClick("Task list", AppMenu.TASK_LIST),
+        openRedirect(APP, "Task list"),
+        logout(APP, "logout-setting:logout-menu-item").assertOk().build())
+    .run();
 ```
 
-### Sicherheitsmanagement für Zugangsdaten
+Benutzeranzahl, Ramp-up und die Zugangsdaten-CSV stammen standardmäßig aus Ihrer `test.properties`, sodass ein Szenario in der Regel nur `.steps(...)` setzt; mit `.users(...)`, `.rampUp(...)` oder `.csvData(...)` überschreiben Sie sie bei Bedarf. Die `ivy-load-test`-Bibliothek übernimmt alle JSF/PrimeFaces-Details (ViewState-Tracking, AJAX-Anforderungsformat, Weiterleitungen) — Sie müssen diese nie anfassen.
 
-Ihre Zugangsdaten-Dateien enthalten sensible Informationen und sollten **niemals** in die Versionskontrolle eingecheckt werden. Hier sind einige Ansätze, um sie sicher zu verwalten:
+## Repository-Übersicht
 
-> **Hinweis:** Dies ist nur ein Beispiel, wie Dateien in einem Projekt verwendet werden können. Es gibt mehrere Möglichkeiten, Zugangsdaten zu verwalten; andere Lösungen sind möglich.
+| Modul | Beschreibung |
+|---|---|
+| `ivy-load-test` | Die Bibliothek — `IvyJsfDsl`-Schritt-Builder und `IvyLoadTestRunner`-Engine-Verdrahtung |
+| `ivy-load-test-demo` | **Hier starten.** Enthält `LoadTestTemplate` (minimales Grundgerüst) und `PortalWalkthroughLoadTest` (vollständiges Beispiel) |
+| `ivy-load-test-product` | Produkt-Packaging — dieses README und Release-Konfiguration |
 
-**Jenkins Secret Files**
-1. Gehen Sie zu Jenkins → Jenkins verwalten → Zugangsdaten verwalten
-2. Fügen Sie Zugangsdaten vom Typ "Secret file" für jede CSV-Datei hinzu
-3. In Ihrer Jenkinsfile:
-```groovy
-pipeline {
-  agent any
-  stages {
-    stage('Setup Credentials') {
-      steps {
-        script {
-          withCredentials([
-            file(credentialsId: 'your_credentials', variable: 'YOUR_CREDENTIALS_CSV'),
-          ]) {
-            sh '''
-              cp "$YOUR_CREDENTIALS_CSV" "$<pfad_zur_csv_datei>"
-            '''
-          }
-        }
-      }
-    }
-    stage('Test') {
-      steps {
-        bat 'mvn test'
-      }
-    }
-  }
+Arbeiten Sie in `ivy-load-test-demo`. Das DSL-Modul ist eine Abhängigkeit, die Sie nicht anfassen müssen, sofern Sie die Bibliothek nicht erweitern.
+
+## Schnellstart
+
+1. Repository klonen.
+2. Vom Repository-Stammverzeichnis alle Module in den lokalen Maven-Cache installieren:
+```bash
+mvn install -DskipTests
+```
+
+## Portal-Beispiel ausführen
+
+`PortalWalkthroughLoadTest` ist ein vollständiger Portal-Durchlauf — Startseite öffnen, Dashboard-Widgets laden, Prozessseite navigieren, einen Prozess starten, Aufgabenliste durchsuchen und die Aufgaben- & Fall-Dashboards besuchen.
+
+**Voraussetzungen:**
+- Axon Ivy Designer läuft lokal mit installiertem Portal
+- Ein gültiger Portal-Benutzer — Zugangsdaten in `resources/one_user.csv` eintragen (eine Zeile, kein Header):
+
+```
+benutzername,passwort
+```
+
+**Ausführen:**
+```bash
+mvn install -Plocal-portal -Dtest=PortalWalkthroughLoadTest
+```
+
+> Diese Tests benötigen ein laufendes Portal und sind vom Standard-CI-Build ausgeschlossen. Das Profil `-Plocal-portal` schließt sie wieder ein und baut das DSL zuerst neu — aus dem Repository-Stammverzeichnis ausführen.
+
+## Szenario aufzeichnen statt IDs von Hand zu sammeln
+
+Anstatt Komponenten-IDs aus den Browser-DevTools abzulesen, zeichnen Sie eine echte Browser-Sitzung auf und lassen Sie sich die Werte *und* die Journey ausgeben (benötigt [jbang](https://www.jbang.dev)):
+
+```bash
+./record.sh http://ihr-host:8081/      # Linux/macOS   (Windows: .\record.ps1 http://ihr-host:8081/)
+```
+
+Ein Browser öffnet sich — gehen Sie Ihr Szenario durch und **schließen Sie das Browserfenster**, um zu beenden. Es gibt den `processHash`, `HOME_PROCESS`, die Menüzeilen und jede angeklickte JSF-Komponenten-ID aus, bereit zum Einfügen in den Block `CUSTOMIZE FOR YOUR APP`. Außerdem wird die **geordnete Journey** ausgegeben — jeder Klick mit dem tatsächlich gesendeten `execute` / `render` / `form` annotiert, sodass Sie den `jsfAjax(...)`-Aufruf selbst schreiben können. Das ist eine *Referenz, kein fertiger Test*: gehen Sie die Journey gegen Ihr eigenes Blueprint durch, setzen Sie die beabsichtigten Schritte um und überspringen Sie das `[background]` / `[remote-command]`-Rauschen. Eine vorhandene Aufzeichnung jederzeit erneut auslesen mit `jbang RecordIds.java recording`.
+
+**Was erfasst wird und was nicht** — der Recorder ist ein HTTP-Proxy und erfasst nur, was über das Netzwerk geht:
+
+- ✅ Seitenaufrufe (`.ivp` / `.xhtml`), AJAX-Klicks, Menünavigation
+- ❌ **clientseitige Filter / Suche** — Tippen in einer Liste, die im Browser filtert, sendet keine Anfrage und wird daher nicht aufgezeichnet
+- ❌ **das Profilmenü oben rechts** (Dashboard-Konfiguration, Mein Profil, …) und **Logout** — der Proxy erfasst die Hauptnavigation, erfasst diese Profilmenü-/Sitzungsende-Navigationen aber nicht; diese von Hand ergänzen
+- ⚠️ automatisch generierte IDs (`j_id_…`) können sich bei einem Redeploy ändern — bei fehlschlagendem Schritt erneut aufzeichnen
+
+Verwenden Sie HTTP (nicht HTTPS) und akzeptieren Sie das JMeter-Proxy-Zertifikat im Browser, sonst umgehen Anfragen den Proxy und werden nicht aufgezeichnet.
+
+## An Ihre eigene App anpassen
+
+`LoadTestTemplate` ist der Copy-Paste-Ausgangspunkt — ein minimales Grundgerüst (App-Konfiguration + ein `openProcess`-Schritt, mit allen Schritt-Bausteinen als Kommentar). `PortalWalkthroughLoadTest` ist das vollständige Beispiel. Egal womit Sie beginnen, diese beiden Stellen ändern Sie:
+
+### 1. `resources/test.properties`
+
+```properties
+server.host=localhost          # Ihr Server
+server.port=8081               # Ihr Server-Port
+load.users=1                   # Anzahl virtueller Benutzer
+load.rampup=1                  # Ramp-up-Periode in Sekunden
+application.name=designer      # Ihr Ivy-Anwendungsname
+project.name=portal            # Ihr Ivy-Projektname
+security.system.name=          # Für lokale Designer-Umgebung leer lassen
+one_user.csv=resources/one_user.csv
+```
+
+### 2. Der Block `CUSTOMIZE FOR YOUR APP` in Ihrer Testklasse
+
+```java
+// a) Ihre App-Koordinaten
+private static final IvyAppConfig APP = IvyAppConfig.builder()
+    .host("${__P(server.host)}")
+    .port("${__P(server.port)}")
+    .application("${__P(application.name)}")
+    .project("${__P(project.name)}")
+    .processHash("IHR_PROZESS_HASH")     // der Hash in der .ivp-URL — im Designer sichtbar
+    .build();
+
+// b) Ihr Einstiegsprozess (.ivp-Datei, die beim Start und nach dem Login geöffnet wird)
+private static final String HOME_PROCESS = "IhreStartseite.ivp";
+
+// c) Menüeinträge — eine Zeile pro Bereich, den Ihr Szenario besucht
+private enum AppMenu {
+    TASK_LIST("main_dashboard", "tasks-menu-id"),
+    ...
 }
 ```
 
-**Sicherheits-Best-Practices**
-1. **Niemals echte Zugangsdaten** in die Versionskontrolle einchecken
-2. **Vorlagendateien verwenden** um das erwartete Format zu dokumentieren
-3. **Zugriff beschränken** auf Zugangsdaten-Dateien auf dem Jenkins-Server
-4. **Zugangsdaten regelmäßig rotieren**
-5. **Prinzip der minimalen Berechtigung** für Testkonten verwenden
+`LoadTestTemplate` enthält nur (a) und (b) — der minimale Startpunkt zum Kopieren. Das `AppMenu`-Enum (c) fügen Sie für ein umfangreicheres Szenario hinzu; `PortalWalkthroughLoadTest` zeigt es im Einsatz.
 
-## HTTP-Sampler-Beispiele
+### 3. Ihr Szenario (optional)
 
-### Einfacher HTTP-Sampler
+Das Standardszenario umfasst Login → Navigation → Logout. Fügen Sie Schritte im `@Test`-Body hinzu, entfernen oder ordnen Sie sie um — jeder Schritt ist ein lesbarer Einzeiler:
+
 ```java
-httpSampler("ProjectStart",
-  "/${__P(security.system.name)}/${__P(application.name)}/pro/${__P(project.name)}/1549F58C18A6C562/DefaultApplicationHomePage.ivp")
-  .method("GET")
+@Test
+public void meinSzenario() throws Exception {
+    IvyLoadTestRunner.builder(APP, "mein-szenario")
+        .steps(
+            openProcess(APP, "Open Home", HOME_PROCESS),
+            menuClick("Task list", AppMenu.TASK_LIST),
+            openRedirect(APP, "Task list"),
+            logout(APP, "logout-setting:logout-menu-item").assertOk().build())
+        .run();
+}
 ```
 
-### HTTP-Sampler mit Parametern
-```java
-httpSampler("Login", "${url}")
-  .method("POST")
-  .param("javax.faces.partial.ajax", "true")
-  .param("javax.faces.source", "login-form:login-command")
-  .param("login:login-form:username", "${username}")
-  .param("login:login-form:password", "${password}")
-  .param("javax.faces.ViewState", "${viewState}")
+`login()` und `logout()` sind DSL-Helfer — geben Sie die Komponenten-IDs aus Ihrer Aufzeichnung an. `menuClick()` ist ein privater Helfer am Ende der Klasse; bearbeiten Sie ihn nur, wenn das Menü-Layout Ihrer App abweicht.
+
+## Zugangsdaten
+
+Die CSV-Datei enthält einen virtuellen Benutzer pro Zeile, ohne Header:
+
+```csv
+benutzername,IhrPasswort
 ```
 
-## Werte und Variablen übergeben
+**Checken Sie niemals echte Zugangsdaten in die Versionskontrolle ein.** Auf CI als Secret-Datei injizieren:
 
-### Properties aus test.properties verwenden
-Verwenden Sie die `${__P(property.name)}` Syntax um Properties zu referenzieren:
-```java
-.host("${__P(server.host)}") // Liest den server.host Wert aus der Datei
+```groovy
+// Jenkinsfile
+withCredentials([file(credentialsId: 'load-test-benutzer', variable: 'BENUTZER_CSV')]) {
+    sh 'cp "$BENUTZER_CSV" ivy-load-test-demo/resources/one_user.csv'
+}
 ```
 
-### Variablen aus CSV-Daten verwenden
-Referenzieren Sie CSV-Spaltennamen als Variablen:
-```java
-.param("login:login-form:username", "${username}")  // Aus csvDataSet variableNames
-.param("login:login-form:password", "${password}")  // Aus csvDataSet variableNames
-```
-
-### Extrahierte Variablen verwenden
-Durch Regex-Extraktoren extrahierte Variablen können in nachfolgenden Anfragen verwendet werden:
-```java
-httpSampler("Login", "${url}")  // Verwendet extrahierte 'url' Variable
-  .param("javax.faces.ViewState", "${viewState}")  // Verwendet extrahierte 'viewState' Variable
-```
-
-## Reguläre-Ausdruck-Extraktoren
-
-Extraktoren erfassen Werte aus HTTP-Antworten zur Verwendung in nachfolgenden Anfragen:
-
-### Einfacher Regex-Extraktor
-```java
-.children(
-  regexExtractor("url", "action=\"([^\"]+)\""),  // Formular-Action-URL extrahieren
-  regexExtractor("viewState", "id=\"j_id__v_0:javax.faces.ViewState:1\" value=(\"[\\S]+\") ")  // ViewState extrahieren
-)
-```
-
-### Weiterleitungs-URL-Extraktor
-```java
-.children(
-  regexExtractor("redirectURL", "<redirect url=\"([^\"]+)\">")  // Weiterleitungs-URL aus Antwort extrahieren
-)
-```
-
-### Häufige Regex-Muster
-```java
-// URLs aus Action-Attributen extrahieren
-regexExtractor("url", "action=\"([^\"]+)\"")
-
-// ViewState aus JSF-Seiten extrahieren
-regexExtractor("viewState", "id=\"j_id__v_0:javax.faces.ViewState:1\" value=(\"[\\S]+\") ")
-
-// Weiterleitungs-URLs aus XML-Antworten extrahieren
-regexExtractor("redirectURL", "<redirect url=\"([^\"]+)\">")
-```
-
-## Antwort-Assertions
-
-Antwort-Assertions validieren, dass HTTP-Anfragen die erwarteten Ergebnisse liefern:
-
-### Antwortcode-Assertion
-```java
-.children(
-  responseAssertion().fieldToTest(TargetField.RESPONSE_CODE).equalsToStrings("200")
-)
-```
-
-### Antwortinhalt-Assertion
-```java
-.children(
-  responseAssertion().fieldToTest(TargetField.RESPONSE_DATA).containsSubstrings("Success")
-)
-```
-
-### Verfügbare Zielfelder
-- `TargetField.RESPONSE_CODE`: HTTP-Statuscode (200, 404, 500, etc.)
-- `TargetField.RESPONSE_DATA`: Antwortinhalt
-- `TargetField.RESPONSE_HEADERS`: HTTP-Antwort-Header
-- `TargetField.RESPONSE_MESSAGE`: HTTP-Antwortnachricht
-
-### Assertion-Methoden
-- `.equalsToStrings(value)`: Exakte Übereinstimmung
-- `.containsSubstrings(value)`: Enthält Teilzeichenkette
-- `.matchesRegex(pattern)`: Entspricht regulärem Ausdruck
-- `.notContainsSubstrings(value)`: Enthält Teilzeichenkette nicht
-
-## Testausführungs-Konfiguration
-
-### Thread-Gruppen-Konfiguration
-```java
-threadGroup("test_name")
-  .rampTo(numberOfUsers, Duration.ofSeconds(rampUpPeriod))
-  .holdIterating(1)
-```
-
-### HTTP-Standardwerte
-```java
-httpDefaults()
-  .host("${__P(server.host)}")  // Standard-Host für alle Anfragen
-  .port(8081) // Standard-Port für alle Anfragen
-```
-
-### HTTP-Header
-```java
-httpHeaders()
-  .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9")
-  .header("Accept-Encoding", "gzip, deflate, br")
-  .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-```
-
-### Cookie-Verwaltung
-```java
-httpCookies()  // Aktiviert automatisches Cookie-Handling
-```
-
-## Berichte und Ergebnisse
-
-### JTL Writer (Rohergebnisse)
-```java
-jtlWriter(jtlDirName, testName + ".jtl")  // Speichert Rohtestergebnisse
-```
-
-### Results Tree Visualizer (zum Debuggen)
-```java
-resultsTreeVisualizer()  // Nur für lokales Debugging einkommentieren
-```
+**Sicherheits-Checkliste:**
+- `resources/*.csv` zur `.gitignore` hinzufügen
+- Dediziertes Testkonto mit minimalen Berechtigungen verwenden
+- Passwort des Testkontos regelmäßig rotieren
 
 ## Fehlerbehebung
 
-### Häufige Probleme
-1. **401/403-Fehler**: Benutzer-Zugangsdaten in CSV-Dateien überprüfen
-2. **ViewState-Fehler**: Sicherstellen, dass der ViewState-Extraktions-Regex korrekt ist
-3. **Timeout-Probleme**: Antwortzeit-Erwartungen in den Properties anpassen
-4. **Verbindungsfehler**: Server-Host und Port-Konfiguration überprüfen
+| Symptom | Wahrscheinliche Ursache |
+|---|---|
+| Login schlägt fehl / 401-Fehler | Falsche Zugangsdaten in CSV, oder CSV hat versehentlich eine Header-Zeile |
+| Alle Samples schlagen sofort fehl | App läuft nicht, oder `server.host` / Port ist falsch |
+| Navigationsschritte schlagen fehl | `processHash` in `IvyAppConfig` stimmt nicht mit Ihrer App überein — aus der `.ivp`-URL im Designer kopieren |
+| Verbindung verweigert auf CI | Der Testrechner kann den App-Server nicht erreichen — Firewall / Netzwerkkonfiguration prüfen |
 
-### Debug-Modus
-`resultsTreeVisualizer()` einkommentieren für detaillierte Anfrage-/Antwort-Inspektion während der lokalen Entwicklung. (siehe `PerformancePortalTest`)
+Für detaillierte Anfrage-/Antwort-Inspektion während der lokalen Entwicklung: `resultsTreeVisualizer()` in `IvyLoadTestRunner` einkommentieren.
