@@ -15,6 +15,16 @@
   <name>ivy-load-test</name>
   <description>Generic, fluent building blocks for load-testing Axon Ivy / JSF (PrimeFaces) apps on top of jmeter-java-dsl. Hides ViewState correlation and the JSF AJAX request boilerplate.</description>
 
+  <repositories>
+    <repository>
+      <id>maven.axonivy.com</id>
+      <url>https://maven.axonivy.com</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>

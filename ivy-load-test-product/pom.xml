@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <variables.yaml.file>../ivy-load-test/config/variables.yaml</variables.yaml.file>
+    <variables.yaml.file>../ivy-load-test-demo/config/variables.yaml</variables.yaml.file>
   </properties>
 
   <build>

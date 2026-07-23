@@ -15,7 +15,7 @@
   <dependencies>
     <!-- Generic, fluent JSF/Ivy load-test building blocks (hides ViewState/AJAX correlation). -->
     <dependency>
-      <groupId>com.axonivy.demo.loadtest</groupId>
+      <groupId>com.axonivy.utils.loadtest</groupId>
       <artifactId>ivy-load-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
