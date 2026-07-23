@@ -3,7 +3,7 @@
   <groupId>com.axonivy.utils.loadtest</groupId>
   <name>ivy-load-test</name>
   <artifactId>ivy-load-test-modules</artifactId>
-  <version>13.2.1</version>
+  <version>13.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -15,7 +15,7 @@
 
   <scm>
     <developerConnection>scm:git:https://github.com/axonivy-market/ivy-load-test.git</developerConnection>
-    <tag>v13.2.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <build>

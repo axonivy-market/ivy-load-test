@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.axonivy.utils.loadtest</groupId>
   <artifactId>ivy-load-test-demo</artifactId>
-  <version>13.2.1</version>
+  <version>13.2.2-SNAPSHOT</version>
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
