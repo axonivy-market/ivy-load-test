@@ -2,6 +2,6 @@
 
 [![CI Build](https://github.com/axonivy-market/ivy-load-test/actions/workflows/ci.yml/badge.svg)](https://github.com/axonivy-market/ivy-load-test/actions/workflows/ci.yml)
 
-Demo performance tests as a reference for your Axon Ivy project using JMeter Java DSL.
+Load-test your Axon Ivy application without writing JMeter XML or dealing with JSF internals — copy the template, configure two things, run.
 
 Read our [documentation](ivy-load-test-product/README.md).

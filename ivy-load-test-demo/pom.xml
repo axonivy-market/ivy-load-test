@@ -8,12 +8,16 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Let a reactor-wide -Dtest=... filter target a single module: modules without a
+         matching test report "No tests to run" instead of failing the whole build. -->
+    <surefire.failIfNoSpecifiedTests>false</surefire.failIfNoSpecifiedTests>
   </properties>
   <dependencies>
+    <!-- Generic, fluent JSF/Ivy load-test building blocks (hides ViewState/AJAX correlation). -->
     <dependency>
-      <groupId>us.abstracta.jmeter</groupId>
-      <artifactId>jmeter-java-dsl</artifactId>
-      <version>1.29.1</version>
+      <groupId>com.axonivy.demo.loadtest</groupId>
+      <artifactId>ivy-load-test</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -52,9 +56,9 @@
         <configuration>
           <excludes>
             <!-- Requires a running Portal server - execute locally only -->
-            <exclude>**/PerformancePortalTest.java</exclude>
-            <!-- Opens JMeter GUI - execute locally only -->
-            <exclude>**/PerformancePortalTestReviewInGui.java</exclude>
+            <exclude>**/PortalWalkthroughLoadTest.java</exclude>
+            <!-- Template skeleton, requires a running Portal server - execute locally only -->
+            <exclude>**/LoadTestTemplate.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -66,4 +70,22 @@
     </plugins>
 
   </build>
+
+  <profiles>
+    <!-- Activate with -Plocal-portal to run the Portal walkthrough tests locally. -->
+    <profile>
+      <id>local-portal</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes combine.self="override"/>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
