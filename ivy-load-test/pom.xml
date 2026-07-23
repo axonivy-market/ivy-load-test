@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.axonivy.demo.loadtest</groupId>
+  <parent>
+    <groupId>com.axonivy.ivy.api</groupId>
+    <artifactId>ivy-project-parent</artifactId>
+    <version>13.2.0</version>
+    <relativePath />
+  </parent>
+  <groupId>com.axonivy.utils.loadtest</groupId>
   <artifactId>ivy-load-test</artifactId>
   <version>13.2.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>ivy-load-test</name>
   <description>Generic, fluent building blocks for load-testing Axon Ivy / JSF (PrimeFaces) apps on top of jmeter-java-dsl. Hides ViewState correlation and the JSF AJAX request boilerplate.</description>
+
+  <repositories>
+    <repository>
+      <id>maven.axonivy.com</id>
+      <url>https://maven.axonivy.com</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
